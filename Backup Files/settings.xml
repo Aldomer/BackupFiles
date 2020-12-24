@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <settings>
+    <filelocation>
+      <Original>c:\Projects\BackupFIles\BackupTest\Folder1\</Original>
+      <Backup>c:\Projects\BackupFIles\BackupTest\Folder2\</Backup>
+    </filelocation>
+  </settings>
