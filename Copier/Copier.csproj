@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\FileInfoPlus.cs" />
     <Compile Include="Classes\Watch.cs" />
     <Compile Include="Classes\FileCollection.cs" />
     <Compile Include="Classes\FileContainer.cs" />

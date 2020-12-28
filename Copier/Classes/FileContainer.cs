@@ -4,8 +4,8 @@ namespace Copier
 {
     public class FileContainer
     {
-        public FileInfo FileSource;
-        public FileInfo FileDestination;
+        public FileInfoPlus FileSource = new FileInfoPlus();
+        public FileInfoPlus FileDestination = new FileInfoPlus();
 
         public FileAction action;
         public FileAction recommendedAction;
@@ -13,18 +13,18 @@ namespace Copier
         public FileContainer(FileInfo fileInfo, AssignToWhichFile assignToWhichFile)
         {
             if (assignToWhichFile == AssignToWhichFile.Source)
-                FileSource = fileInfo;
+                FileSource.SetFileInfo(fileInfo);
             else if (assignToWhichFile == AssignToWhichFile.Destination)
-                FileDestination = fileInfo;
+                FileDestination.SetFileInfo(fileInfo);
             action = FileAction.None;
         }
 
         public void AddData(FileInfo fileInfo, AssignToWhichFile assignToWhichFile)
         {
             if (assignToWhichFile == AssignToWhichFile.Source)
-                FileSource = fileInfo;
+                FileSource.SetFileInfo(fileInfo);
             else if (assignToWhichFile == AssignToWhichFile.Destination)
-                FileDestination = fileInfo;
+                FileDestination.SetFileInfo(fileInfo);
         }
     }
 
