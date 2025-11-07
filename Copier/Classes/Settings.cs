@@ -13,7 +13,7 @@ namespace Copier
         {
             for (int i = 0; i < xSettings.GetElementsByTagName("filelocation").Count; i++)
             {
-                Watch.Add(new Watch() { Original = xSettings.GetElementsByTagName("Original")[i].InnerText, Backup = xSettings.GetElementsByTagName("Backup")[i].InnerText });
+                Watch.Add(new Watch() { Original = xSettings.GetElementsByTagName("Original")[i].InnerText, Backup = xSettings.GetElementsByTagName("Backup")[i].InnerText, BackupChanges = xSettings.GetElementsByTagName("BackupChanges")[i].InnerText });
             }
         }
 

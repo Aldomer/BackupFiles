@@ -36,7 +36,7 @@ namespace Backup_Files
 
             foreach (Copier.Watch foldersToBackup in settings.Watch)
             {
-                Copier.FileManager.Backup(foldersToBackup.Original, foldersToBackup.Backup, foldersToBackup.Name, backgroundWorker, false);
+                Copier.FileManager.Backup(foldersToBackup.Original, foldersToBackup.Backup, foldersToBackup.BackupChanges, foldersToBackup.Name, backgroundWorker, false);
             }
         }
 

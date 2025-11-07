@@ -51,7 +51,15 @@ namespace Copier
         {
             get
             {
-                return _fileInfo.Extension;
+                return _fileInfo.Extension.ToUpper();
+            }
+        }
+
+        public bool FileInfoSet
+        {
+            get
+            {
+                return (_fileInfo != null);
             }
         }
 

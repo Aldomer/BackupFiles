@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
   <settings>
     <filelocation>
-      <Original>c:\Projects\BackupFIles\BackupTest\Folder1\</Original>
-      <Backup>c:\Projects\BackupFIles\BackupTest\Folder2\</Backup>
+      <Original>c:\Projects\BackupFiles\BackupTest\Folder1\</Original>
+      <Backup>c:\Projects\BackupFiles\BackupTest\Folder2\</Backup>
+      <BackupChanges>c:\Projects\BackupFiles\BackupTest\Folder2Changes\</BackupChanges>
     </filelocation>
   </settings>
