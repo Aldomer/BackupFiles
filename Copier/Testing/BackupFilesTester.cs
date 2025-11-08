@@ -15,8 +15,8 @@ namespace Copier.Testing
 
             SourcePathDoesNotExist();
             DesinationRootDoesNotExist();
+            DestinationPathDoesNotExist();
 
-            //Need to do all this but for a single file
             FileActionCopyFileLengthDiff();
             FileActionCopyFileLastWriteTimeDiff();
             FileActionCopyFileNotInDestination();
@@ -56,6 +56,20 @@ namespace Copier.Testing
                 _testResults.Add("Pass: DesinationRootDoesNotExist");
             else
                 _testResults.Add("Fail: DesinationRootDoesNotExist");
+        }
+
+        private void DestinationPathDoesNotExist()
+        {
+            Settings settings = GetTestSettings();
+
+            settings.Watch[0].Backup = @"c:\IDoNotExist\";
+
+            FileCollection fileCollection = TestBackup(settings);
+
+            if (fileCollection.Result.StartsWith("Destination Path does not exist"))
+                _testResults.Add("Pass: DestinationPathDoesNotExist");
+            else
+                _testResults.Add("Fail: DestinationPathDoesNotExist");
         }
 
         private void FileActionCopyFileNotInDestination()
@@ -122,8 +136,8 @@ namespace Copier.Testing
         {
             Settings settings = GetTestSettings();
 
-            settings.Watch[0].Original = @"C:\Projects\BackupFiles\BackupTest\Compare\FileActionCopy\FileNotInDestination\Source\";
-            settings.Watch[0].Backup = @"C:\Projects\BackupFiles\BackupTest\Compare\FileActionCopy\FileNotInDestination\Destination\";
+            settings.Watch[0].Original = @"C:\Projects\BackupFiles\BackupTest\Compare\SingleFileActionCopy\FileNotInDestination\Source\";
+            settings.Watch[0].Backup = @"C:\Projects\BackupFiles\BackupTest\Compare\SingleFileActionCopy\FileNotInDestination\Destination\";
 
             FileCollection fileCollection = TestBackup(settings, "FileActionCopyTestFile.doc");
 
@@ -137,8 +151,8 @@ namespace Copier.Testing
         {
             Settings settings = GetTestSettings();
 
-            settings.Watch[0].Original = @"C:\Projects\BackupFiles\BackupTest\Compare\FileActionCopy\FileLengthDiff\Source\";
-            settings.Watch[0].Backup = @"C:\Projects\BackupFiles\BackupTest\Compare\FileActionCopy\FileLengthDiff\Destination\";
+            settings.Watch[0].Original = @"C:\Projects\BackupFiles\BackupTest\Compare\SingleFileActionCopy\FileLengthDiff\Source\";
+            settings.Watch[0].Backup = @"C:\Projects\BackupFiles\BackupTest\Compare\SingleFileActionCopy\FileLengthDiff\Destination\";
 
             FileCollection fileCollection = TestBackup(settings, "FileActionCopyTestFile.doc");
 
@@ -152,8 +166,8 @@ namespace Copier.Testing
         {
             Settings settings = GetTestSettings();
 
-            settings.Watch[0].Original = @"C:\Projects\BackupFiles\BackupTest\Compare\FileActionCopy\FileLastWriteTimeDiff\Source\";
-            settings.Watch[0].Backup = @"C:\Projects\BackupFiles\BackupTest\Compare\FileActionCopy\FileLastWriteTimeDiff\Destination\";
+            settings.Watch[0].Original = @"C:\Projects\BackupFiles\BackupTest\Compare\SingleFileActionCopy\FileLastWriteTimeDiff\Source\";
+            settings.Watch[0].Backup = @"C:\Projects\BackupFiles\BackupTest\Compare\SingleFileActionCopy\FileLastWriteTimeDiff\Destination\";
 
             FileCollection fileCollection = TestBackup(settings, "FileActionCopyTestFile.doc");
 
@@ -168,8 +182,8 @@ namespace Copier.Testing
         {
             Settings settings = GetTestSettings();
 
-            settings.Watch[0].Original = @"C:\Projects\BackupFiles\BackupTest\Compare\FileActionDelete\Source\";
-            settings.Watch[0].Backup = @"C:\Projects\BackupFiles\BackupTest\Compare\FileActionDelete\Destination\";
+            settings.Watch[0].Original = @"C:\Projects\BackupFiles\BackupTest\Compare\SingleFileActionDelete\Source\";
+            settings.Watch[0].Backup = @"C:\Projects\BackupFiles\BackupTest\Compare\SingleFileActionDelete\Destination\";
 
             FileCollection fileCollection = TestBackup(settings, "FileActionDeleteTestFile.doc");
 
@@ -201,7 +215,7 @@ namespace Copier.Testing
             Watch watch = new Watch();
 
             watch.Backup = @"c:\Projects\BackupFiles\BackupTest\Folder2\";
-            watch.BackupChanges = @"c:\Projects\BackupFiles\BackupTest\Folder2Changes\";
+            watch.BackupChanges = @"c:\Projects\BackupFiles\BackupTest\Compare\Changes\";
             watch.Original = @"c:\Projects\BackupFiles\BackupTest\Folder1\";
 
             settings.Watch.Add(watch);

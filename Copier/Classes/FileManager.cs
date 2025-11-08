@@ -22,6 +22,7 @@ namespace Copier
             tw.Close();
         }
 
+        //displayCompareFileResults doesn't do anything.
         public static FileCollection Backup(string sourcePath, string destPath, string destPathChanges, string name, BackgroundWorker worker, bool displayCompareFilesResults, string fileName = "")
         {
             FileCollection fileCollection = new FileCollection(sourcePath, destPath, fileName);
@@ -29,9 +30,10 @@ namespace Copier
 
             if (fileCollection.Result == "Compare Complete")
             {
-            //    if (!displayCompareFilesResults)
-            //        DoFileActions(fileCollection, true, destPath, destPathChanges, worker);
-            //    fileCollection.Successful = true;
+                if (!displayCompareFilesResults)
+                    DoFileActions(fileCollection, true, destPath, destPathChanges, worker);
+
+                fileCollection.Successful = true;
             }
             else
                 worker.ReportProgress(1, fileCollection.Result);
@@ -54,6 +56,9 @@ namespace Copier
 
             if (!fileCollection.DestinationDriveExists())
                 return "Destination Drive does not exist " + fileCollection.DestinationDrive;
+
+            if (!Directory.Exists(fileCollection.destPath))
+                return "Destination Path does not exist " + fileCollection.destPath;
 
             string[] sourceFiles = null, destFiles = null;
 
@@ -98,6 +103,7 @@ namespace Copier
                 fileContainer.recommendedAction = FileAction.Copy;
         }
 
+        //fileContainer.action isn't used always using recommendedAction. Maybe the start of asking the user do you want to do the action
         public static void DoFileActions(FileCollection fileCollection, bool useRecommendedAction, string destPath, string destPathChanges, BackgroundWorker worker)
         {
             bool noChanges = true;
@@ -105,58 +111,53 @@ namespace Copier
             foreach (string key in fileCollection.fileContainer.Keys)
             {
                 FileContainer fileContainer = fileCollection.fileContainer[key];
-                if (System.IO.Directory.Exists(fileCollection.destPath))
+
+                FileAction action = (useRecommendedAction) ? fileContainer.recommendedAction : fileContainer.action;
+
+                if (action == FileAction.Copy)
                 {
-                    FileAction action = (useRecommendedAction) ? fileContainer.recommendedAction : fileContainer.action;
-                    if (action == FileAction.Copy)
+                    string FileBFullPath;
+                    string FileBDirectory;
+
+                    if (fileContainer.FileDestination.FileInfoSet)
                     {
-                        string FileBFullPath;
-                        if (fileContainer.FileDestination.FileInfoSet)
-                        {
-                            FileBFullPath = fileContainer.FileDestination.FullName;
-                            if (DoAction)
-                            {
-                                if (!File.Exists(fileContainer.FileDestination.DirectoryName.Replace(destPath, destPathChanges)))
-                                    Directory.CreateDirectory(fileContainer.FileDestination.DirectoryName.Replace(destPath, destPathChanges));
-
-                                File.Copy(fileContainer.FileDestination.FullName, fileContainer.FileDestination.FullName.Replace(destPath, destPathChanges), true);
-
-                                File.Copy(fileContainer.FileSource.FullName, FileBFullPath, true);
-                            }
-                        }
-                        else
-                        {
-                            string FileBDirectory = fileCollection.destPath + fileContainer.FileSource.DirectoryName.Replace(fileCollection.sourcePath.TrimEnd('\\'), "");
-                            FileBFullPath = fileCollection.destPath + fileContainer.FileSource.FullName.Replace(fileCollection.sourcePath, "");
-                            if (DoAction)
-                            {
-                                Directory.CreateDirectory(FileBDirectory);
-                                File.Copy(fileContainer.FileSource.FullName, FileBFullPath);
-                            }
-                        }
-
-                        worker.ReportProgress(1, "Copied " + fileContainer.FileSource.FullName + " to " + fileCollection.destPath);
-
-                        noChanges = false;
+                        FileBDirectory = fileContainer.FileDestination.DirectoryName.Replace(destPath, destPathChanges);
+                        FileBFullPath = fileContainer.FileDestination.FullName;
                     }
-                    else if (action == FileAction.Delete)
+                    else
                     {
-                        if (DoAction)
-                        {
-                            if (!File.Exists(fileContainer.FileDestination.DirectoryName.Replace(destPath, destPathChanges)))
-                                Directory.CreateDirectory(fileContainer.FileDestination.DirectoryName.Replace(destPath, destPathChanges));
-
-                            File.Copy(fileContainer.FileDestination.FullName, fileContainer.FileDestination.FullName.Replace(destPath, destPathChanges), true);
-                            File.Delete(fileContainer.FileDestination.FullName);
-                        }
-                        worker.ReportProgress(1, "Deleted " + fileContainer.FileDestination.FullName);
-
-                        noChanges = false;
+                        FileBDirectory = fileCollection.destPath + fileContainer.FileSource.DirectoryName.Replace(fileCollection.sourcePath.TrimEnd('\\'), "");
+                        FileBFullPath = fileCollection.destPath + fileContainer.FileSource.FullName.Replace(fileCollection.sourcePath, "");
                     }
+                        
+                    if (DoAction)
+                    {
+                        Directory.CreateDirectory(FileBDirectory);
+
+                        //Save Changes
+                        //File.Copy(fileContainer.FileDestination.FullName, fileContainer.FileDestination.FullName.Replace(destPath, destPathChanges), true);
+
+                        File.Copy(fileContainer.FileSource.FullName, FileBFullPath, true);
+                    }
+
+                    worker.ReportProgress(1, "Copied " + fileContainer.FileSource.FullName + " to " + fileCollection.destPath);
+
+                    noChanges = false;
                 }
-                else
+                else if (action == FileAction.Delete)
                 {
-                    worker.ReportProgress(1, fileCollection.destPath + " does not exist");
+                    if (DoAction)
+                    {
+                        //For making a backup copy in case delete wasn't what was wanted
+                        //Directory.CreateDirectory(fileContainer.FileDestination.DirectoryName.Replace(destPath, destPathChanges));
+                        //File.Copy(fileContainer.FileDestination.FullName, fileContainer.FileDestination.FullName.Replace(destPath, destPathChanges), true);
+
+                        File.Delete(fileContainer.FileDestination.FullName);
+                    }
+
+                    worker.ReportProgress(1, "Deleted " + fileContainer.FileDestination.FullName);
+
+                    noChanges = false;
                 }
             }
 
