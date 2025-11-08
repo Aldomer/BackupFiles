@@ -15,6 +15,8 @@ namespace Copier
         public string fileName = string.Empty;
         public bool Successful = false;
 
+        public string Result = string.Empty;
+
         public FileCollection(string pi_sourcePath, string pi_destPath, string pi_fileName)
         {
             sourcePath = pi_sourcePath;
@@ -25,10 +27,18 @@ namespace Copier
         public void Load(string[] sourceFiles, string[] destFiles, string Name)
         {
             System.IO.FileInfo fileInfo;
-            foreach (string path in sourceFiles)
+
+            if (sourceFiles != null)
             {
-                fileInfo = new System.IO.FileInfo(path);
-                fileContainer.Add(Name + " " + path.Replace(sourcePath, ""), new FileContainer(fileInfo, AssignToWhichFile.Source));
+                foreach (string path in sourceFiles)
+                {
+                    fileInfo = new System.IO.FileInfo(path);
+
+                    if (Name == null)
+                        fileContainer.Add(path.Replace(sourcePath, ""), new FileContainer(fileInfo, AssignToWhichFile.Source));
+                    else
+                        fileContainer.Add(Name + " " + path.Replace(sourcePath, ""), new FileContainer(fileInfo, AssignToWhichFile.Source));
+                }
             }
 
             if (destFiles != null)
@@ -36,12 +46,16 @@ namespace Copier
                 string keyPath;
                 foreach (string path in destFiles)
                 {
-                    keyPath = Name + " " + path.Replace(destPath, "");
+                    if (Name == null)
+                        keyPath = path.Replace(destPath, "");
+                    else
+                        keyPath = Name + " " + path.Replace(destPath, "");
+
                     fileInfo = new System.IO.FileInfo(path);
                     if (fileContainer.ContainsKey(keyPath))
                         fileContainer[keyPath].AddData(fileInfo, AssignToWhichFile.Destination);
                     else
-                        fileContainer.Add(Name + " " + keyPath, new FileContainer(fileInfo, AssignToWhichFile.Destination));
+                        fileContainer.Add(keyPath, new FileContainer(fileInfo, AssignToWhichFile.Destination));
                 }
             }
         }
@@ -80,7 +94,7 @@ namespace Copier
                     destRoot = destPath.Substring(0, end);
                 }
 
-                DestinationDrive = destPath.Substring(0, 3);
+                DestinationDrive = destRoot;
 
                 if (!Directory.Exists(destRoot))
                     return false;

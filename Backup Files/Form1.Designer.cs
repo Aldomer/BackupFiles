@@ -32,6 +32,7 @@
             this.btnMakeBackup = new System.Windows.Forms.Button();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.btnTestBackupFiles = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtOutput
@@ -62,11 +63,22 @@
             this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
             this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
             // 
+            // btnTestBackupFiles
+            // 
+            this.btnTestBackupFiles.Location = new System.Drawing.Point(7, 379);
+            this.btnTestBackupFiles.Name = "btnTestBackupFiles";
+            this.btnTestBackupFiles.Size = new System.Drawing.Size(872, 23);
+            this.btnTestBackupFiles.TabIndex = 30;
+            this.btnTestBackupFiles.Text = "Test";
+            this.btnTestBackupFiles.UseVisualStyleBackColor = true;
+            this.btnTestBackupFiles.Click += new System.EventHandler(this.btnTestBackupFiles_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(886, 376);
+            this.ClientSize = new System.Drawing.Size(886, 406);
+            this.Controls.Add(this.btnTestBackupFiles);
             this.Controls.Add(this.btnMakeBackup);
             this.Controls.Add(this.txtOutput);
             this.Name = "Form1";
@@ -82,6 +94,7 @@
         private System.Windows.Forms.Button btnMakeBackup;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.Button btnTestBackupFiles;
     }
 }
 

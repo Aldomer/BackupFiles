@@ -25,16 +25,17 @@ namespace Copier
         public static FileCollection Backup(string sourcePath, string destPath, string destPathChanges, string name, BackgroundWorker worker, bool displayCompareFilesResults, string fileName = "")
         {
             FileCollection fileCollection = new FileCollection(sourcePath, destPath, fileName);
-            string result = CompareFolders(fileCollection, name);
+            fileCollection.Result = CompareFolders(fileCollection, name);
 
-            if (result == "Compare Complete")
+            if (fileCollection.Result == "Compare Complete")
             {
-                if (!displayCompareFilesResults)
-                    DoFileActions(fileCollection, true, destPath, destPathChanges, worker);
-                fileCollection.Successful = true;
+            //    if (!displayCompareFilesResults)
+            //        DoFileActions(fileCollection, true, destPath, destPathChanges, worker);
+            //    fileCollection.Successful = true;
             }
             else
-                worker.ReportProgress(1, result);
+                worker.ReportProgress(1, fileCollection.Result);
+
             worker.ReportProgress(1, ""); //Just for fomatting to put an extra line between Backups
 
             return fileCollection;
@@ -58,7 +59,8 @@ namespace Copier
 
             if (fileCollection.fileName != "")
             {
-                sourceFiles = new string[1] { fileCollection.sourcePath + fileCollection.fileName };
+                if (File.Exists(fileCollection.sourcePath + fileCollection.fileName))
+                    sourceFiles = new string[1] { fileCollection.sourcePath + fileCollection.fileName };
 
                 if (File.Exists(fileCollection.destPath + fileCollection.fileName))
                     destFiles = new string[1] { fileCollection.destPath + fileCollection.fileName };

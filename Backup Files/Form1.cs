@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Backup_Files
 {
@@ -8,6 +9,8 @@ namespace Backup_Files
     {
         private readonly Copier.Settings settings = new Copier.Settings();
         private Stopwatch _stopWatch;
+
+        private readonly Copier.Testing.BackupFilesTester _backupFilesTester = new Copier.Testing.BackupFilesTester();
 
         public Form1()
         {
@@ -32,11 +35,11 @@ namespace Backup_Files
 
         private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            _stopWatch = Stopwatch.StartNew();
+            //_stopWatch = Stopwatch.StartNew();
 
             foreach (Copier.Watch foldersToBackup in settings.Watch)
             {
-                Copier.FileManager.Backup(foldersToBackup.Original, foldersToBackup.Backup, foldersToBackup.BackupChanges, foldersToBackup.Name, backgroundWorker, false);
+                //Copier.FileManager.Backup(foldersToBackup.Original, foldersToBackup.Backup, foldersToBackup.BackupChanges, foldersToBackup.Name, backgroundWorker, false);
             }
         }
 
@@ -50,5 +53,21 @@ namespace Backup_Files
             _stopWatch.Stop();
             log("Elapsed Time: " + _stopWatch.Elapsed.Hours + "h " + _stopWatch.Elapsed.Minutes + "m " + _stopWatch.Elapsed.Seconds + "s " + _stopWatch.Elapsed.Milliseconds + "ms");
         }
+
+        #region Testing
+        private void btnTestBackupFiles_Click(object sender, EventArgs e)
+        {
+            _stopWatch = Stopwatch.StartNew();
+
+            List<string> _testResults = _backupFilesTester.Run(backgroundWorker);
+
+            _stopWatch.Stop();
+
+            foreach (string testResult in _testResults)
+            {
+                log(testResult);
+            }
+        }
+        #endregion Testing
     }
 }
