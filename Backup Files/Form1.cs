@@ -35,11 +35,11 @@ namespace Backup_Files
 
         private void backgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            //_stopWatch = Stopwatch.StartNew();
+            _stopWatch = Stopwatch.StartNew();
 
             foreach (Copier.Watch foldersToBackup in settings.Watch)
             {
-                //Copier.FileManager.Backup(foldersToBackup.Original, foldersToBackup.Backup, foldersToBackup.BackupChanges, foldersToBackup.Name, backgroundWorker, false);
+                Copier.FileManager.Backup(foldersToBackup.Original, foldersToBackup.Backup, foldersToBackup.BackupChanges, foldersToBackup.Name, string.Empty, true, backgroundWorker);
             }
         }
 

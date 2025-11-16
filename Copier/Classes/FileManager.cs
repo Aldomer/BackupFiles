@@ -22,25 +22,32 @@ namespace Copier
             tw.Close();
         }
 
-        //displayCompareFileResults doesn't do anything.
-        public static FileCollection Backup(string sourcePath, string destPath, string destPathChanges, string name, BackgroundWorker worker, bool displayCompareFilesResults, string fileName = "")
+        public static FileCollection Backup(string sourcePath, string destPath, string destPathChanges, string name, string fileName = "", bool doFileActions = true, BackgroundWorker worker = null)
         {
             FileCollection fileCollection = new FileCollection(sourcePath, destPath, fileName);
             fileCollection.Result = CompareFolders(fileCollection, name);
 
             if (fileCollection.Result == "Compare Complete")
             {
-                if (!displayCompareFilesResults)
+                if (doFileActions)
                     DoFileActions(fileCollection, true, destPath, destPathChanges, worker);
 
                 fileCollection.Successful = true;
             }
             else
-                worker.ReportProgress(1, fileCollection.Result);
+                ReportProgress(worker, 1, fileCollection.Result);
 
-            worker.ReportProgress(1, ""); //Just for fomatting to put an extra line between Backups
+            ReportProgress(worker, 1, string.Empty); //Just for fomatting to put an extra line between Backups
 
             return fileCollection;
+        }
+
+        private static void ReportProgress(BackgroundWorker worker, int percentProgress, object userState)
+        {
+            if (worker != null)
+            {
+                worker.ReportProgress(percentProgress, userState);
+            }
         }
 
         private static void CheckandCreateBackupFolder(Watch watch)
@@ -116,31 +123,32 @@ namespace Copier
 
                 if (action == FileAction.Copy)
                 {
-                    string FileBFullPath;
-                    string FileBDirectory;
+                    string FileDestinationFullPath;
+                    string FileDestinationDirectory;
 
                     if (fileContainer.FileDestination.FileInfoSet)
                     {
-                        FileBDirectory = fileContainer.FileDestination.DirectoryName.Replace(destPath, destPathChanges);
-                        FileBFullPath = fileContainer.FileDestination.FullName;
+                        FileDestinationDirectory = fileContainer.FileDestination.DirectoryName.Replace(destPath, destPathChanges);
+                        FileDestinationFullPath = fileContainer.FileDestination.FullName;
                     }
                     else
                     {
-                        FileBDirectory = fileCollection.destPath + fileContainer.FileSource.DirectoryName.Replace(fileCollection.sourcePath.TrimEnd('\\'), "");
-                        FileBFullPath = fileCollection.destPath + fileContainer.FileSource.FullName.Replace(fileCollection.sourcePath, "");
+                        FileDestinationDirectory = fileCollection.destPath + fileContainer.FileSource.DirectoryName.Replace(fileCollection.sourcePath.TrimEnd('\\'), "");
+                        FileDestinationFullPath = fileCollection.destPath + fileContainer.FileSource.FullName.Replace(fileCollection.sourcePath, "");
                     }
                         
                     if (DoAction)
                     {
-                        Directory.CreateDirectory(FileBDirectory);
+                        //Backup Changes
+                        //string FileBackupChangesPath = fileContainer.FileDestination.FullName.Replace(destPath, destPathChanges);
+                        //Directory.CreateDirectory(FileBackupChangesPath);
+                        //File.Copy(fileContainer.FileDestination.FullName, FileBackupChangesPath, true);
 
-                        //Save Changes
-                        //File.Copy(fileContainer.FileDestination.FullName, fileContainer.FileDestination.FullName.Replace(destPath, destPathChanges), true);
-
-                        File.Copy(fileContainer.FileSource.FullName, FileBFullPath, true);
+                        Directory.CreateDirectory(FileDestinationDirectory);
+                        File.Copy(fileContainer.FileSource.FullName, FileDestinationFullPath, true);
                     }
 
-                    worker.ReportProgress(1, "Copied " + fileContainer.FileSource.FullName + " to " + fileCollection.destPath);
+                    ReportProgress(worker, 1, "Copied " + fileContainer.FileSource.FullName + " to " + fileCollection.destPath);
 
                     noChanges = false;
                 }
@@ -155,14 +163,14 @@ namespace Copier
                         File.Delete(fileContainer.FileDestination.FullName);
                     }
 
-                    worker.ReportProgress(1, "Deleted " + fileContainer.FileDestination.FullName);
+                    ReportProgress(worker, 1, "Deleted " + fileContainer.FileDestination.FullName);
 
                     noChanges = false;
                 }
             }
 
             if (noChanges)
-                worker.ReportProgress(1, fileCollection.sourcePath + ": No files updated");
+                ReportProgress(worker, 1, fileCollection.sourcePath + ": No files updated");
         }
     }
 
